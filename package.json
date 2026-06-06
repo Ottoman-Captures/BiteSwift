@@ -1,0 +1,10 @@
+{
+  "name": "biteswift-monorepo",
+  "version": "1.0.0",
+  "description": "BiteSwift Premium Food Delivery Service Workspace",
+  "scripts": {
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm start --prefix frontend",
+    "dev": "npx -y concurrently --kill-others \"npm run dev:backend\" \"npm run dev:frontend\""
+  }
+}

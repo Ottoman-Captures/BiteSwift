@@ -1,0 +1,110 @@
+[
+  {
+    "role": "customer",
+    "walletBalance": 77.25,
+    "loyaltyPoints": 1375,
+    "isGoldSubscriber": true,
+    "achievements": [
+      "Account Created",
+      "First Feast",
+      "BiteSwift Gold"
+    ],
+    "createdAt": "2026-06-04T12:00:00.000Z",
+    "_id": "645f8e56a421b8c1992ef101",
+    "name": "John Doe",
+    "email": "customer@test.com",
+    "password": "$2a$10$iYthXVgNrCmVvejwgLNTxOAyt6a7tIUvacOvRPdtEK0K384Il9cre"
+  },
+  {
+    "_id": "645f8e56a421b8c1992ef102",
+    "name": "Admin Manager",
+    "email": "admin@test.com",
+    "password": "$2a$10$iYthXVgNrCmVvejwgLNTxOAyt6a7tIUvacOvRPdtEK0K384Il9cre",
+    "role": "admin",
+    "walletBalance": 0,
+    "loyaltyPoints": 0,
+    "isGoldSubscriber": false,
+    "achievements": [],
+    "createdAt": "2026-06-04T12:00:00.000Z"
+  },
+  {
+    "_id": "645f8e56a421b8c1992ef103",
+    "name": "Ali (Vendor Luigi)",
+    "email": "vendor@test.com",
+    "password": "$2a$10$iYthXVgNrCmVvejwgLNTxOAyt6a7tIUvacOvRPdtEK0K384Il9cre",
+    "role": "vendor",
+    "walletBalance": 0,
+    "loyaltyPoints": 0,
+    "isGoldSubscriber": false,
+    "achievements": [],
+    "createdAt": "2026-06-04T12:00:00.000Z"
+  },
+  {
+    "_id": "645f8e56a421b8c1992ef104",
+    "name": "Sana (Vendor Burger)",
+    "email": "vendor2@test.com",
+    "password": "$2a$10$iYthXVgNrCmVvejwgLNTxOAyt6a7tIUvacOvRPdtEK0K384Il9cre",
+    "role": "vendor",
+    "walletBalance": 0,
+    "loyaltyPoints": 0,
+    "isGoldSubscriber": false,
+    "achievements": [],
+    "createdAt": "2026-06-04T12:00:00.000Z"
+  },
+  {
+    "_id": "645f8e56a421b8c1992ef105",
+    "name": "Shahzad (Rider)",
+    "email": "driver@test.com",
+    "password": "$2a$10$iYthXVgNrCmVvejwgLNTxOAyt6a7tIUvacOvRPdtEK0K384Il9cre",
+    "role": "driver",
+    "walletBalance": 0,
+    "loyaltyPoints": 0,
+    "isGoldSubscriber": false,
+    "achievements": [],
+    "createdAt": "2026-06-04T12:00:00.000Z"
+  },
+  {
+    "role": "customer",
+    "walletBalance": 21.85,
+    "loyaltyPoints": 1022,
+    "isGoldSubscriber": true,
+    "achievements": [
+      "Account Created",
+      "First Feast",
+      "BiteSwift Gold"
+    ],
+    "createdAt": "2026-06-05T21:12:27.966Z",
+    "name": "Swedenine stock",
+    "email": "s1sdtbl@zenvex.edu.pl",
+    "password": "$2a$10$F4ZxnM6fs15CSbNZ8Z0RPugkqI5.7UZKuw/rOI1yFro7Ft1O.Er6G",
+    "_id": "69d89398b31109a7dda655aa"
+  },
+  {
+    "role": "admin",
+    "walletBalance": 0,
+    "loyaltyPoints": 0,
+    "isGoldSubscriber": false,
+    "achievements": [],
+    "createdAt": "2026-06-05T23:30:32.027Z",
+    "name": "sd",
+    "email": "alex4@aura.health",
+    "password": "$2a$10$89ZADhWBiURrxgVAx/g1kuFZmc.gPJKq3Mu7sre/OBAmRyMthUBie",
+    "_id": "c470dfe262a70c2a706df02a"
+  },
+  {
+    "role": "customer",
+    "walletBalance": 42.78,
+    "loyaltyPoints": 380,
+    "isGoldSubscriber": false,
+    "achievements": [
+      "Account Created",
+      "First Feast",
+      "Refund Handled"
+    ],
+    "createdAt": "2026-06-06T07:44:39.657Z",
+    "name": "hi",
+    "email": "alex4@aura.healthy",
+    "password": "$2a$10$optVcVS8WX4LTjC7xzeCHeCVprUMB3WSVYaS6PHmGNx0YW0eOzrEq",
+    "_id": "fe74d7469bad7908c13be1fa"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "short_name": "BiteSwift",
+  "name": "BiteSwift Premium Food Delivery",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#121212",
+  "background_color": "#121212"
+}
