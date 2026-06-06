@@ -44,21 +44,41 @@ router.post('/', auth, async (req, res) => {
         // Gold subscribers get free delivery!
         let deliveryFee = user.isGoldSubscriber ? 0 : (restaurant.deliveryFee || 2.99);
 
-        // Apply Promo code discounts (Predefined logic)
+        // Apply Promo code discounts (Dynamic database check with static fallback)
         let discountAmount = 0;
         if (promoCode) {
             const code = promoCode.toUpperCase();
-            if (code === 'WELCOME10') {
-                discountAmount = Math.round((subtotal * 0.10) * 100) / 100;
-            } else if (code === 'BITE25') {
-                discountAmount = Math.round((subtotal * 0.25) * 100) / 100;
-            } else if (code === 'STUDENT15') {
-                discountAmount = Math.round((subtotal * 0.15) * 100) / 100;
-            } else if (code === 'RAMADAN20') {
-                discountAmount = Math.round((subtotal * 0.20) * 100) / 100;
-            } else if (code === 'FREEDEL') {
-                discountAmount = deliveryFee;
-                deliveryFee = 0;
+            
+            // Check Database first
+            const promo = await Promo.findOne({ code, isActive: true });
+            if (promo) {
+                const isExpired = new Date() > new Date(promo.expiryDate);
+                const hasMinOrder = subtotal >= (promo.minOrder || 0);
+
+                if (!isExpired && hasMinOrder) {
+                    if (promo.discountType === 'percentage') {
+                        discountAmount = Math.round((subtotal * (promo.discountValue / 100)) * 100) / 100;
+                    } else if (promo.discountType === 'fixed') {
+                        discountAmount = promo.discountValue;
+                    } else if (promo.discountType === 'free_delivery') {
+                        discountAmount = deliveryFee;
+                        deliveryFee = 0;
+                    }
+                }
+            } else {
+                // Fallback to hardcoded ones for backward compatibility
+                if (code === 'WELCOME10') {
+                    discountAmount = Math.round((subtotal * 0.10) * 100) / 100;
+                } else if (code === 'BITE25') {
+                    discountAmount = Math.round((subtotal * 0.25) * 100) / 100;
+                } else if (code === 'STUDENT15') {
+                    discountAmount = Math.round((subtotal * 0.15) * 100) / 100;
+                } else if (code === 'RAMADAN20') {
+                    discountAmount = Math.round((subtotal * 0.20) * 100) / 100;
+                } else if (code === 'FREEDEL') {
+                    discountAmount = deliveryFee;
+                    deliveryFee = 0;
+                }
             }
         }
 

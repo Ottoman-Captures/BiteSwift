@@ -97,11 +97,21 @@ function AdminDashboard({ restaurants, fetchRestaurants }) {
         }
     };
 
-    const handleAddPromo = (e) => {
+    const handleAddPromo = async (e) => {
         e.preventDefault();
-        showAlert(`Promo Code "${promoCode.toUpperCase()}" generated successfully and activated globally!`);
-        setPromoCode('');
-        setPromoVal('');
+        try {
+            await API.post('/api/promos', {
+                code: promoCode,
+                discountType: promoType,
+                discountValue: parseFloat(promoVal) || 0
+            });
+            showAlert(`Promo Code "${promoCode.toUpperCase()}" generated successfully and activated globally!`);
+            setPromoCode('');
+            setPromoVal('');
+        } catch (err) {
+            console.error(err);
+            showAlert(err.response?.data?.msg || 'Failed to generate promo code.');
+        }
     };
 
     const handleAddMenuItem = async (e) => {

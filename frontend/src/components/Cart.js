@@ -61,24 +61,62 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
         });
     };
 
-    const handleApplyPromo = (e) => {
+    const handleApplyPromo = async (e) => {
         e.preventDefault();
         setPromoError(null);
         const code = promoInput.toUpperCase().trim();
-        
-        const validCodes = {
-            'WELCOME10': { type: 'percentage', val: 0.10, desc: '10% OFF Welcome Bonus' },
-            'BITE25': { type: 'percentage', val: 0.25, desc: '25% OFF Special' },
-            'STUDENT15': { type: 'percentage', val: 0.15, desc: '15% OFF Student Saver' },
-            'RAMADAN20': { type: 'percentage', val: 0.20, desc: '20% OFF Festive Discount' },
-            'FREEDEL': { type: 'free_delivery', val: 0, desc: 'Free Delivery Applied' }
-        };
+        if (!code) return;
 
-        if (validCodes[code]) {
-            setActivePromo({ code, ...validCodes[code] });
+        try {
+            // 1. Try checking the database
+            const res = await API.get(`/api/promos/${code}`);
+            const promo = res.data;
+            
+            // Map db schema to frontend activePromo structure
+            let type = promo.discountType;
+            let val = promo.discountValue;
+            let desc = '';
+
+            if (type === 'percentage') {
+                val = val / 100; // Database stores 20 for 20%
+                desc = `${promo.discountValue}% OFF Promo`;
+            } else if (type === 'fixed') {
+                desc = `$${val.toFixed(2)} OFF Promo`;
+            } else if (type === 'free_delivery') {
+                val = 0;
+                desc = 'Free Delivery Applied';
+            }
+
+            // Verify minimum order limit on frontend
+            if (subtotal < promo.minOrder) {
+                setPromoError(`Minimum order of $${promo.minOrder} required for this coupon.`);
+                return;
+            }
+
+            setActivePromo({
+                code: promo.code,
+                type,
+                val,
+                desc
+            });
             setPromoInput('');
-        } else {
-            setPromoError('Invalid coupon code.');
+        } catch (err) {
+            // 2. Fallback to hardcoded list if database check fails (e.g. 404)
+            const validCodes = {
+                'WELCOME10': { type: 'percentage', val: 0.10, desc: '10% OFF Welcome Bonus' },
+                'BITE25': { type: 'percentage', val: 0.25, desc: '25% OFF Special' },
+                'STUDENT15': { type: 'percentage', val: 0.15, desc: '15% OFF Student Saver' },
+                'RAMADAN20': { type: 'percentage', val: 0.20, desc: '20% OFF Festive Discount' },
+                'FREEDEL': { type: 'free_delivery', val: 0, desc: 'Free Delivery Applied' }
+            };
+
+            if (validCodes[code]) {
+                setActivePromo({ code, ...validCodes[code] });
+                setPromoInput('');
+            } else {
+                const errMsg = err.response?.data?.msg || 'Invalid coupon code.';
+                setPromoError(errMsg);
+            }
         }
     };
 

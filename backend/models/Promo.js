@@ -10,7 +10,10 @@ const PromoSchema = new Schema({
     },
     discountValue: { type: Number, default: 0 },
     minOrder: { type: Number, default: 0 },
-    expiryDate: { type: Date, required: true },
+    expiryDate: { 
+        type: Date, 
+        default: () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // Default: 1 year from now
+    },
     isActive: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now }
 });
