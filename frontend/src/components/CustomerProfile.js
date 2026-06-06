@@ -82,7 +82,7 @@ function CustomerProfile({ user, onUpdateUser }) {
                             )}
                         </h2>
                         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem', maxWidth: '500px' }}>
-                            Unlock premium benefits: **$0 Unlimited Free Delivery** on all participating local kitchens, priority order handling, and exclusive menu discounts.
+                            Unlock premium benefits: <strong>$0 Unlimited Free Delivery</strong> on all participating local kitchens, priority order handling, and exclusive menu discounts.
                         </p>
                     </div>
                 </div>
@@ -140,7 +140,7 @@ function CustomerProfile({ user, onUpdateUser }) {
                         </button>
                     </form>
                     <small style={{ display: 'block', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                        Earn **2% instant cashback** credited automatically to this wallet on every order.
+                        Earn <strong>2% instant cashback</strong> credited automatically to this wallet on every order.
                     </small>
                 </div>
 

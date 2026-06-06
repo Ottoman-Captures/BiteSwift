@@ -393,7 +393,7 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
                     )}
                     {activePromo && (
                         <div className="alert alert-success" style={{ padding: '0.5rem', fontSize: '0.8rem', marginTop: '-0.75rem', marginBottom: '0.75rem' }}>
-                            🎉 **{activePromo.code}** Applied: {activePromo.desc}
+                            🎉 <strong>{activePromo.code}</strong> Applied: {activePromo.desc}
                         </div>
                     )}
 
@@ -429,8 +429,8 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
 
                     {/* Summary coordinates review */}
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', padding: '0.5rem', border: '1px solid var(--border-color)', borderRadius: '4px', margin: '1rem 0' }}>
-                        📍 **Delivery to:** {address} (Tel: {phone})<br/>
-                        💳 **Payment:** {paymentMethod.toUpperCase()}
+                        📍 <strong>Delivery to:</strong> {address} (Tel: {phone})<br/>
+                        💳 <strong>Payment:</strong> {paymentMethod.toUpperCase()}
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -465,7 +465,7 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
                     <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
                     <h2 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-heading)', color: '#ffffff' }}>Order Confirmed!</h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: '0.5rem 0 1.5rem', maxWidth: '300px' }}>
-                        Your feast is on its way. Estimated preparation started at **{checkoutOrder.restaurant?.name}**.
+                        Your feast is on its way. Estimated preparation started at <strong>{checkoutOrder.restaurant?.name}</strong>.
                     </p>
 
                     <div style={{ padding: '0.75rem', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '4px', marginBottom: '1.5rem', width: '100%' }}>

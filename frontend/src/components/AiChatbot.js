@@ -1,6 +1,105 @@
 import React, { useState, useEffect, useRef } from 'react';
 import API from '../api';
 
+const parseMarkdown = (text) => {
+    if (!text) return '';
+    
+    const lines = text.split('\n');
+    const renderedLines = [];
+    
+    lines.forEach((line, lineIdx) => {
+        let parts = [{ type: 'text', content: line }];
+        
+        // 1. Parse Bold (**text**)
+        let nextParts = [];
+        parts.forEach(part => {
+            if (part.type === 'text') {
+                const subParts = part.content.split(/\*\*(.*?)\*\*/g);
+                subParts.forEach((sub, subIdx) => {
+                    if (subIdx % 2 === 1) {
+                        nextParts.push({ type: 'bold', content: sub });
+                    } else {
+                        nextParts.push({ type: 'text', content: sub });
+                    }
+                });
+            } else {
+                nextParts.push(part);
+            }
+        });
+        parts = nextParts;
+        
+        // 2. Parse Italic (*text*)
+        nextParts = [];
+        parts.forEach(part => {
+            if (part.type === 'text') {
+                const subParts = part.content.split(/\*(.*?)\*/g);
+                subParts.forEach((sub, subIdx) => {
+                    if (subIdx % 2 === 1) {
+                        nextParts.push({ type: 'italic', content: sub });
+                    } else {
+                        nextParts.push({ type: 'text', content: sub });
+                    }
+                });
+            } else {
+                nextParts.push(part);
+            }
+        });
+        parts = nextParts;
+        
+        // 3. Parse Inline Code (`text`)
+        nextParts = [];
+        parts.forEach(part => {
+            if (part.type === 'text') {
+                const subParts = part.content.split(/`(.*?)`/g);
+                subParts.forEach((sub, subIdx) => {
+                    if (subIdx % 2 === 1) {
+                        nextParts.push({ type: 'code', content: sub });
+                    } else {
+                        nextParts.push({ type: 'text', content: sub });
+                    }
+                });
+            } else {
+                nextParts.push(part);
+            }
+        });
+        parts = nextParts;
+
+        // Map parsed parts to inline components
+        const lineContent = parts.map((p, pIdx) => {
+            if (p.type === 'bold') {
+                return <strong key={pIdx} style={{ fontWeight: '700', color: '#ffffff' }}>{p.content}</strong>;
+            }
+            if (p.type === 'italic') {
+                return <em key={pIdx} style={{ fontStyle: 'italic' }}>{p.content}</em>;
+            }
+            if (p.type === 'code') {
+                return (
+                    <code 
+                        key={pIdx} 
+                        style={{ 
+                            fontFamily: 'monospace', 
+                            backgroundColor: 'rgba(255,255,255,0.15)', 
+                            padding: '0.1rem 0.3rem', 
+                            borderRadius: '4px',
+                            fontSize: '0.9em'
+                        }}
+                    >
+                        {p.content}
+                    </code>
+                );
+            }
+            return p.content;
+        });
+
+        renderedLines.push(<span key={lineIdx}>{lineContent}</span>);
+        if (lineIdx < lines.length - 1) {
+            renderedLines.push(<br key={`br-${lineIdx}`} />);
+        }
+    });
+
+    return renderedLines;
+};
+
 function AiChatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
@@ -114,7 +213,7 @@ function AiChatbot() {
                                     boxShadow: 'var(--shadow-sm)'
                                 }}
                             >
-                                {m.text}
+                                {parseMarkdown(m.text)}
                             </div>
                         ))}
                         {loading && (

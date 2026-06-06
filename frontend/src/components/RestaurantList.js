@@ -1,6 +1,105 @@
 import React, { useState, useEffect } from 'react';
 import API from '../api';
 
+const parseMarkdown = (text) => {
+    if (!text) return '';
+    
+    const lines = text.split('\n');
+    const renderedLines = [];
+    
+    lines.forEach((line, lineIdx) => {
+        let parts = [{ type: 'text', content: line }];
+        
+        // 1. Parse Bold (**text**)
+        let nextParts = [];
+        parts.forEach(part => {
+            if (part.type === 'text') {
+                const subParts = part.content.split(/\*\*(.*?)\*\*/g);
+                subParts.forEach((sub, subIdx) => {
+                    if (subIdx % 2 === 1) {
+                        nextParts.push({ type: 'bold', content: sub });
+                    } else {
+                        nextParts.push({ type: 'text', content: sub });
+                    }
+                });
+            } else {
+                nextParts.push(part);
+            }
+        });
+        parts = nextParts;
+        
+        // 2. Parse Italic (*text*)
+        nextParts = [];
+        parts.forEach(part => {
+            if (part.type === 'text') {
+                const subParts = part.content.split(/\*(.*?)\*/g);
+                subParts.forEach((sub, subIdx) => {
+                    if (subIdx % 2 === 1) {
+                        nextParts.push({ type: 'italic', content: sub });
+                    } else {
+                        nextParts.push({ type: 'text', content: sub });
+                    }
+                });
+            } else {
+                nextParts.push(part);
+            }
+        });
+        parts = nextParts;
+        
+        // 3. Parse Inline Code (`text`)
+        nextParts = [];
+        parts.forEach(part => {
+            if (part.type === 'text') {
+                const subParts = part.content.split(/`(.*?)`/g);
+                subParts.forEach((sub, subIdx) => {
+                    if (subIdx % 2 === 1) {
+                        nextParts.push({ type: 'code', content: sub });
+                    } else {
+                        nextParts.push({ type: 'text', content: sub });
+                    }
+                });
+            } else {
+                nextParts.push(part);
+            }
+        });
+        parts = nextParts;
+
+        // Map parsed parts to inline components
+        const lineContent = parts.map((p, pIdx) => {
+            if (p.type === 'bold') {
+                return <strong key={pIdx} style={{ fontWeight: '700', color: '#ffffff' }}>{p.content}</strong>;
+            }
+            if (p.type === 'italic') {
+                return <em key={pIdx} style={{ fontStyle: 'italic' }}>{p.content}</em>;
+            }
+            if (p.type === 'code') {
+                return (
+                    <code 
+                        key={pIdx} 
+                        style={{ 
+                            fontFamily: 'monospace', 
+                            backgroundColor: 'rgba(255,255,255,0.15)', 
+                            padding: '0.1rem 0.3rem', 
+                            borderRadius: '4px',
+                            fontSize: '0.9em'
+                        }}
+                    >
+                        {p.content}
+                    </code>
+                );
+            }
+            return p.content;
+        });
+
+        renderedLines.push(<span key={lineIdx}>{lineContent}</span>);
+        if (lineIdx < lines.length - 1) {
+            renderedLines.push(<br key={`br-${lineIdx}`} />);
+        }
+    });
+
+    return renderedLines;
+};
+
 function RestaurantList({ restaurants, setCart, cart }) {
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
     const [menu, setMenu] = useState([]);
@@ -223,7 +322,7 @@ function RestaurantList({ restaurants, setCart, cart }) {
                                         </span>
                                         <span style={{ color: 'var(--primary)', fontWeight: '700', fontSize: '0.85rem' }}>${item.price.toFixed(2)}</span>
                                     </div>
-                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>From: **{item.restaurant?.name}**</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>From: <strong style={{ fontWeight: '600', color: '#ffffff' }}>{item.restaurant?.name}</strong></span>
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem', marginTop: '0.2rem' }}>
                                         <span style={{ fontSize: '0.65rem', backgroundColor: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>
                                             🔥 {item.calories} kcal
@@ -404,7 +503,7 @@ function RestaurantList({ restaurants, setCart, cart }) {
                                         Viewing Menu
                                     </span>
                                     <h3 style={{ fontSize: '1.35rem' }}>{selectedRestaurant.name}</h3>
-                                    <small style={{ color: 'var(--text-secondary)' }}>Min. order: **${selectedRestaurant.minimumOrder}**</small>
+                                    <small style={{ color: 'var(--text-secondary)' }}>Min. order: <strong style={{ fontWeight: '600', color: '#ffffff' }}>${selectedRestaurant.minimumOrder}</strong></small>
                                 </div>
                                 <button className="btn btn-secondary btn-sm" style={{ border: 'none' }} onClick={() => setSelectedRestaurant(null)}>
                                     Close
@@ -419,7 +518,7 @@ function RestaurantList({ restaurants, setCart, cart }) {
                                             <span>📝 AI Reviews Summary:</span>
                                             <span style={{ cursor: 'pointer', fontSize: '0.75rem', textDecoration: 'underline' }} onClick={() => setReviewSummary(null)}>Dismiss</span>
                                         </div>
-                                        {reviewSummary}
+                                        {parseMarkdown(reviewSummary)}
                                     </div>
                                 ) : (
                                     <button 

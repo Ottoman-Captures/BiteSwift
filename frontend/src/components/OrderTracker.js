@@ -373,7 +373,7 @@ function OrderTracker({ activeOrder, setActiveOrder }) {
                                     <div style={{ flex: 1 }}>
                                         <h4 style={{ fontSize: '0.95rem', color: '#ffffff' }}>Assigned Rider: {activeOrder.driverId.name}</h4>
                                         <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                                            Contact: **{activeOrder.driverId.phone || '0312-4567890'}** | Vehicle: Honda CD-70 (REG: LED-9988)
+                                            Contact: <strong>{activeOrder.driverId.phone || '0312-4567890'}</strong> | Vehicle: Honda CD-70 (REG: LED-9988)
                                         </p>
                                     </div>
                                     <span className="badge badge-confirmed" style={{ fontSize: '0.7rem' }}>4.9 ★</span>

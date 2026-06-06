@@ -323,7 +323,7 @@ function DriverDashboard({ user }) {
                                     <span style={{ fontSize: '0.85rem', color: 'var(--success)', fontWeight: 'bold' }}>$2.99 Fare</span>
                                 </div>
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                                    📍 Deliver to: **{job.address}**
+                                    📍 Deliver to: <strong>{job.address}</strong>
                                 </div>
                                 <button 
                                     className="btn btn-primary btn-sm btn-block"
@@ -351,7 +351,7 @@ function DriverDashboard({ user }) {
                                         Active route
                                     </span>
                                     <h4 style={{ fontSize: '1.25rem', color: '#ffffff' }}>Deliver from {activeJob.restaurant?.name}</h4>
-                                    <small style={{ color: 'var(--text-secondary)' }}>Deliver to: **{activeJob.address}** (Tel: {activeJob.phone})</small>
+                                    <small style={{ color: 'var(--text-secondary)' }}>Deliver to: <strong>{activeJob.address}</strong> (Tel: {activeJob.phone})</small>
                                 </div>
                                 <span className={`badge badge-${activeJob.status || 'placed'}`}>
                                     {(activeJob.status || 'placed').replace('_', ' ')}
