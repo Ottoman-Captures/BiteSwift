@@ -12,13 +12,15 @@ function Navbar({ user, onLogout, currentView, setView, cartCount }) {
     const toggleNotifications = () => setShowNotifications(!showNotifications);
 
     return (
-        <nav className="navbar" style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
+        <nav className="navbar">
             <div className="navbar-brand" onClick={() => setView('catalog')} style={{ cursor: 'pointer' }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: 'var(--primary)' }}>
+                <span className="brand-mark">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: 'var(--primary)' }}>
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" />
                     <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
+                </span>
                 Bite<span>Swift</span>
             </div>
 
@@ -85,19 +87,19 @@ function Navbar({ user, onLogout, currentView, setView, cartCount }) {
                     )}
 
                     {/* Right utilities: Notifications & Wallet & Session profile */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '1rem' }}>
+                    <div className="navbar-utilities">
                         
                         {/* Notifications Bell */}
                         {user.role === 'customer' && (
                             <div style={{ position: 'relative' }}>
                                 <button 
-                                    className="btn btn-sm btn-secondary" 
-                                    style={{ padding: '0.4rem', position: 'relative', border: 'none' }}
+                                    className="icon-btn" 
                                     onClick={toggleNotifications}
+                                    title="Live alerts"
                                 >
-                                    🔔
+                                    <span className="icon-bell" aria-hidden="true"></span>
                                     {notifications.length > 0 && (
-                                        <span style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', backgroundColor: 'var(--primary)', borderRadius: '50%' }}></span>
+                                        <span className="notification-dot"></span>
                                     )}
                                 </button>
                                 
@@ -135,7 +137,7 @@ function Navbar({ user, onLogout, currentView, setView, cartCount }) {
 
                         {/* Customer Wallet indicator */}
                         {user.role === 'customer' && (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', borderRight: '1px solid var(--border-color)', paddingRight: '1rem' }}>
+                            <div className="wallet-chip">
                                 <small style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>WALLET</small>
                                 <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--success)' }}>
                                     ${user.walletBalance?.toFixed(2) || '0.00'}
@@ -151,31 +153,20 @@ function Navbar({ user, onLogout, currentView, setView, cartCount }) {
                                     {user.role} {user.isGoldSubscriber ? '• Gold' : ''}
                                 </span>
                             </div>
-                            <div style={{ 
-                                width: '36px', 
-                                height: '36px', 
-                                borderRadius: '50%', 
-                                backgroundColor: user.role === 'admin' ? 'var(--secondary)' : 'var(--primary)',
-                                color: '#ffffff',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontWeight: '700',
-                                textTransform: 'uppercase'
-                            }}>
+                            <div className={`avatar-ring role-${user.role}`}>
                                 {user.name.charAt(0)}
                             </div>
                         </div>
 
                         {/* Logout button */}
-                        <button className="btn btn-sm btn-secondary" onClick={onLogout} style={{ border: 'none', padding: '0.4rem 0.6rem' }} title="Logout">
-                            ✕
+                        <button className="icon-btn" onClick={onLogout} title="Logout">
+                            <span className="icon-close" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>
             ) : (
                 <div className="navbar-menu">
-                    <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Welcome to BiteSwift SaaS Platform</span>
+                    <span className="guest-welcome">Welcome to BiteSwift SaaS Platform</span>
                 </div>
             )}
         </nav>

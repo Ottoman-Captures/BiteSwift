@@ -101,6 +101,17 @@ router.post('/:id/menu', auth, async (req, res) => {
     }
 });
 
+// get all menu items across all restaurants (featured)
+router.get('/menu/featured', async (req, res) => {
+    try {
+        const items = await MenuItem.find({ available: true }).populate('restaurant').limit(8);
+        res.json(items);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
+
 // get menu for restaurant
 router.get('/:id/menu', async (req, res) => {
     try {

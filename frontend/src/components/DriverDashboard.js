@@ -212,7 +212,7 @@ function DriverDashboard({ user }) {
                 .bindPopup(`<b>Customer Address</b><br/>${activeJob.address}`);
 
             const route = window.L.polyline([restaurantCoords, customerCoords], {
-                color: '#ffb703',
+                color: '#4f46e5',
                 weight: 4,
                 opacity: 0.6,
                 dashArray: '5, 10'

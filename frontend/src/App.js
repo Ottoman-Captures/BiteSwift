@@ -10,6 +10,7 @@ import VendorDashboard from './components/VendorDashboard';
 import DriverDashboard from './components/DriverDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import AiChatbot from './components/AiChatbot';
+import BackgroundIngredients from './components/BackgroundIngredients';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -130,7 +131,8 @@ function App() {
     }
 
     return (
-        <div className="app-container">
+        <div className="app-container" style={{ position: 'relative' }}>
+            <BackgroundIngredients />
             <Navbar 
                 user={user} 
                 onLogout={handleLogout} 
@@ -139,7 +141,7 @@ function App() {
                 cartCount={cart.reduce((sum, it) => sum + it.qty, 0)}
             />
 
-            <main className="main-content">
+            <main className={`main-content view-${view}`}>
                 {/* Auth Page */}
                 {view === 'auth' && !user && (
                     <Auth onAuthSuccess={handleAuthSuccess} />
@@ -147,8 +149,56 @@ function App() {
 
                 {/* Catalog Page (Customer standard layout) */}
                 {view === 'catalog' && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
-                        <div style={{ flex: '3 1 600px' }}>
+                    <div className="catalog-page">
+                        <section className="catalog-hero">
+                            <div className="hero-copy">
+                                <span className="eyebrow">AI-powered food delivery</span>
+                                <h1>Cravings, kitchens, riders, and rewards in one electric dashboard.</h1>
+                                <p>
+                                    Explore curated restaurants, launch smart meal searches, and checkout with a polished flow built for fast decisions.
+                                </p>
+                                <div className="hero-actions">
+                                    <button className="btn btn-primary" onClick={() => document.getElementById('catalog-explorer')?.scrollIntoView({ behavior: 'smooth' })}>
+                                        Explore Restaurants
+                                    </button>
+                                    {!user && (
+                                        <button className="btn btn-secondary" onClick={() => setView('auth')}>
+                                            Sign In
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="hero-showcase" aria-hidden="true">
+                                <div className="orbit orbit-one"></div>
+                                <div className="orbit orbit-two"></div>
+                                <div className="hero-dish hero-dish-main">
+                                    <span className="dish-steam"></span>
+                                    <span>Fresh</span>
+                                </div>
+                                <div className="hero-metric metric-fast">
+                                    <strong>22m</strong>
+                                    <span>avg delivery</span>
+                                </div>
+                                <div className="hero-metric metric-rating">
+                                    <strong>4.9</strong>
+                                    <span>top kitchens</span>
+                                </div>
+                                <div className="hero-metric metric-ai">
+                                    <strong>AI</strong>
+                                    <span>meal finder</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="catalog-stats" aria-label="BiteSwift highlights">
+                            <div><strong>{restaurants.length || '25+'}</strong><span>live restaurants</span></div>
+                            <div><strong>5</strong><span>checkout steps</span></div>
+                            <div><strong>24/7</strong><span>AI support</span></div>
+                            <div><strong>Gold</strong><span>reward wallet</span></div>
+                        </section>
+
+                        <div id="catalog-explorer" className="catalog-layout">
+                        <div className="catalog-main-column">
                             <RestaurantList 
                                 restaurants={restaurants} 
                                 setCart={setCart} 
@@ -156,18 +206,19 @@ function App() {
                             />
                         </div>
                         {user && user.role === 'customer' && (
-                            <div style={{ flex: '1.2 1 300px', position: 'sticky', top: '90px', alignSelf: 'flex-start' }}>
+                            <aside className="cart-sidebar">
                                 <Cart 
                                     cart={cart} 
                                     setCart={setCart} 
                                     onOrderPlaced={handleOrderPlaced} 
                                     user={user}
                                 />
-                            </div>
+                            </aside>
                         )}
                         {(!user) && (
-                            <div style={{ flex: '1.2 1 300px', position: 'sticky', top: '90px', alignSelf: 'flex-start' }}>
-                                <div className="glass-panel text-center" style={{ padding: '2rem' }}>
+                            <aside className="cart-sidebar">
+                                <div className="glass-panel sign-in-card text-center">
+                                    <span className="card-kicker">Guest mode</span>
                                     <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Start Ordering</h3>
                                     <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                                         Sign in to select payment options, apply coupons, and track deliveries.
@@ -180,8 +231,9 @@ function App() {
                                         Go to Sign In
                                     </button>
                                 </div>
-                            </div>
+                            </aside>
                         )}
+                        </div>
                     </div>
                 )}
 

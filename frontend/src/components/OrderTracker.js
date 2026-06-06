@@ -284,7 +284,7 @@ function OrderTracker({ activeOrder, setActiveOrder }) {
                                         borderRadius: 'var(--radius-sm)',
                                         border: '1px solid',
                                         borderColor: activeOrder?._id === o._id ? 'var(--primary)' : 'var(--border-color)',
-                                        backgroundColor: activeOrder?._id === o._id ? 'rgba(255,107,53,0.04)' : 'rgba(255,255,255,0.01)',
+                                        backgroundColor: activeOrder?._id === o._id ? 'var(--primary-glow)' : 'rgba(255,255,255,0.01)',
                                         marginBottom: '0.75rem',
                                         cursor: 'pointer'
                                     }}

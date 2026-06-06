@@ -98,6 +98,13 @@ class QueryChain {
         return this;
     }
 
+    limit(count) {
+        if (typeof count === 'number') {
+            this.data = this.data.slice(0, count);
+        }
+        return this;
+    }
+
     sort(criteria) {
         if (criteria && criteria.createdAt) {
             const direction = criteria.createdAt; // 1 or -1

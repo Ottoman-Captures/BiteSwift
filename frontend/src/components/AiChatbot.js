@@ -125,13 +125,84 @@ function AiChatbot() {
         setLoading(true);
 
         try {
-            const res = await API.post('/ai/support-chat', { message: userMsg });
-            setMessages(prev => [...prev, { sender: 'ai', text: res.data.reply }]);
+            // Prepare messages history
+            const history = messages.map(m => ({
+                sender: m.sender,
+                text: m.text
+            }));
+
+            // Make stream request
+            const response = await fetch(`${API.defaults.baseURL || 'http://localhost:5000/api'}/ai/support-chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-auth-token': localStorage.getItem('token') || ''
+                },
+                body: JSON.stringify({ message: userMsg, history })
+            });
+
+            setLoading(false); // Hide initial typing indicators
+
+            if (!response.ok) {
+                throw new Error(`Server returned error status: ${response.status}`);
+            }
+
+            // Add placeholder AI message
+            setMessages(prev => [...prev, { sender: 'ai', text: '', status: 'Connecting to virtual agent...' }]);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let done = false;
+            let fullText = '';
+            let currentStatus = '';
+
+            while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                if (done) break;
+
+                const chunkValue = decoder.decode(value, { stream: true });
+                const lines = chunkValue.split('\n');
+
+                for (const line of lines) {
+                    const cleaned = line.trim();
+                    if (!cleaned || !cleaned.startsWith('data: ')) continue;
+
+                    try {
+                        const parsed = JSON.parse(cleaned.slice(6));
+                        if (parsed.type === 'status') {
+                            currentStatus = parsed.content;
+                            setMessages(prev => {
+                                const updated = [...prev];
+                                const last = updated[updated.length - 1];
+                                if (last && last.sender === 'ai') {
+                                    last.status = currentStatus;
+                                }
+                                return updated;
+                            });
+                        } else if (parsed.type === 'text') {
+                            fullText += parsed.content;
+                            setMessages(prev => {
+                                const updated = [...prev];
+                                const last = updated[updated.length - 1];
+                                if (last && last.sender === 'ai') {
+                                    last.text = fullText;
+                                    last.status = ''; // Clear database status once actual text starts coming in
+                                }
+                                return updated;
+                            });
+                        } else if (parsed.type === 'done') {
+                            done = true;
+                        }
+                    } catch (e) {
+                        // Partial chunk parse error - ignore and wait for remaining buffer
+                    }
+                }
+            }
         } catch (err) {
             console.error(err);
-            setMessages(prev => [...prev, { sender: 'ai', text: "Sorry, I am having trouble connecting to the support servers right now. Please try again." }]);
-        } finally {
             setLoading(false);
+            setMessages(prev => [...prev, { sender: 'ai', text: "Sorry, I am having trouble connecting to the support servers right now. Please try again.", status: '' }]);
         }
     };
 
@@ -147,6 +218,7 @@ function AiChatbot() {
             {/* Circular Floating trigger button */}
             <button 
                 onClick={toggleChat}
+                className="animate-float"
                 style={{
                     width: '56px',
                     height: '56px',
@@ -213,6 +285,31 @@ function AiChatbot() {
                                     boxShadow: 'var(--shadow-sm)'
                                 }}
                             >
+                                {m.status && (
+                                    <div style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '0.4rem', 
+                                        fontSize: '0.75rem', 
+                                        color: 'rgba(255, 255, 255, 0.75)', 
+                                        fontStyle: 'italic', 
+                                        marginBottom: '0.4rem',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                        padding: '0.2rem 0.5rem',
+                                        borderRadius: '6px'
+                                    }}>
+                                        <span style={{ 
+                                            display: 'inline-block', 
+                                            width: '8px', 
+                                            height: '8px', 
+                                            border: '1px solid rgba(255,255,255,0.75)', 
+                                            borderTopColor: 'transparent', 
+                                            borderRadius: '50%', 
+                                            animation: 'spin 0.8s linear infinite' 
+                                        }}></span>
+                                        {m.status}
+                                    </div>
+                                )}
                                 {parseMarkdown(m.text)}
                             </div>
                         ))}
@@ -252,6 +349,10 @@ function AiChatbot() {
                 @keyframes bounce {
                     0%, 100% { transform: translateY(0); }
                     50% { transform: translateY(-4px); }
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
                 }
             `}</style>
         </div>

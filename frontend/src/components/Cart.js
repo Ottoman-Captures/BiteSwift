@@ -157,16 +157,66 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
 
     if (cart.length === 0 && step !== 5) {
         return (
-            <div className="glass-panel" style={{ height: '100%' }}>
+            <div className="glass-panel empty-cart-panel">
                 <div className="cart-title-section">
                     <h2 style={{ fontSize: '1.25rem' }}>Basket Cart</h2>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Empty</span>
+                    <span className="status-pill">Ready</span>
                 </div>
-                <div className="empty-state">
-                    <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" style={{ margin: '0 auto 1rem', color: 'var(--text-muted)' }}>
+
+                <div className="empty-cart-hero">
+                    <div className="cart-bag-orbit">
+                        <svg width="42" height="42" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
                     </svg>
-                    <p style={{ fontSize: '0.9rem' }}>Your shopping basket is empty.</p>
+                    </div>
+                    <h3>Build your perfect order</h3>
+                    <p>Pick a kitchen from the left and your checkout timeline, rewards, promos, and delivery details will light up here.</p>
+                </div>
+
+                <div className="quick-promo-grid">
+                    <div>
+                        <strong>WELCOME10</strong>
+                        <span>10% first order</span>
+                    </div>
+                    <div>
+                        <strong>BITE25</strong>
+                        <span>flash saver</span>
+                    </div>
+                    <div>
+                        <strong>FREEDEL</strong>
+                        <span>delivery deal</span>
+                    </div>
+                </div>
+
+                <div className="mini-checkout-map">
+                    <div className="mini-step active"><span>1</span><p>Choose meals</p></div>
+                    <div className="mini-step"><span>2</span><p>Add address</p></div>
+                    <div className="mini-step"><span>3</span><p>Pay securely</p></div>
+                    <div className="mini-step"><span>4</span><p>Track rider</p></div>
+                </div>
+
+                <div className="cart-side-stack">
+                    <div className="side-feature-card">
+                        <span className="side-feature-icon">AI</span>
+                        <div>
+                            <strong>Smart meal finder</strong>
+                            <p>Search by craving, diet, budget, or mood and get instant dish matches.</p>
+                        </div>
+                    </div>
+                    <div className="side-feature-card">
+                        <span className="side-feature-icon">24</span>
+                        <div>
+                            <strong>Live delivery support</strong>
+                            <p>Order status, cancellations, and refunds stay one tap away.</p>
+                        </div>
+                    </div>
+                    <div className="side-feature-card">
+                        <span className="side-feature-icon">$</span>
+                        <div>
+                            <strong>Wallet rewards</strong>
+                            <p>Gold members unlock free delivery and faster checkout feedback.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -289,7 +339,7 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
                     <h3 style={{ fontSize: '1.1rem', marginBottom: '1.25rem' }}>Select Payment</h3>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                        <label className={`glass-panel`} style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '0.75rem', borderColor: paymentMethod === 'cod' ? 'var(--primary)' : 'var(--border-color)', backgroundColor: paymentMethod === 'cod' ? 'rgba(255,107,53,0.03)' : 'transparent' }}>
+                        <label className={`glass-panel`} style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '0.75rem', borderColor: paymentMethod === 'cod' ? 'var(--primary)' : 'var(--border-color)', backgroundColor: paymentMethod === 'cod' ? 'var(--primary-glow)' : 'transparent' }}>
                             <input 
                                 type="radio" 
                                 name="payment" 
@@ -304,7 +354,7 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
                             </div>
                         </label>
 
-                        <label className={`glass-panel`} style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '0.75rem', borderColor: paymentMethod === 'card' ? 'var(--primary)' : 'var(--border-color)', backgroundColor: paymentMethod === 'card' ? 'rgba(255,107,53,0.03)' : 'transparent' }}>
+                        <label className={`glass-panel`} style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '0.75rem', borderColor: paymentMethod === 'card' ? 'var(--primary)' : 'var(--border-color)', backgroundColor: paymentMethod === 'card' ? 'var(--primary-glow)' : 'transparent' }}>
                             <input 
                                 type="radio" 
                                 name="payment" 
@@ -319,7 +369,7 @@ function Cart({ cart, setCart, onOrderPlaced, user }) {
                             </div>
                         </label>
 
-                        <label className={`glass-panel`} style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '0.75rem', borderColor: (paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash') ? 'var(--primary)' : 'var(--border-color)', backgroundColor: (paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash') ? 'rgba(255,107,53,0.03)' : 'transparent' }}>
+                        <label className={`glass-panel`} style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '0.75rem', borderColor: (paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash') ? 'var(--primary)' : 'var(--border-color)', backgroundColor: (paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash') ? 'var(--primary-glow)' : 'transparent' }}>
                             <input 
                                 type="radio" 
                                 name="payment" 

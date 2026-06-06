@@ -104,6 +104,7 @@ function RestaurantList({ restaurants, setCart, cart }) {
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
     const [menu, setMenu] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [featuredItems, setFeaturedItems] = useState([]);
     
     // Advanced Filters
     const [selectedCuisine, setSelectedCuisine] = useState('All');
@@ -119,6 +120,71 @@ function RestaurantList({ restaurants, setCart, cart }) {
     const [aiPrompt, setAiPrompt] = useState('');
     const [aiResults, setAiResults] = useState([]);
     const [searchingAi, setSearchingAi] = useState(false);
+
+    // Fetch popular/featured items on load
+    useEffect(() => {
+        const fetchFeatured = async () => {
+            try {
+                const res = await API.get('/restaurants/menu/featured');
+                setFeaturedItems(res.data);
+            } catch (err) {
+                console.error('Error fetching featured items:', err);
+            }
+        };
+        fetchFeatured();
+    }, []);
+
+    // 3D card tilt handlers
+    const handleCardMouseMove = (e) => {
+        const card = e.currentTarget;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const xc = rect.width / 2;
+        const yc = rect.height / 2;
+        
+        const rotateX = -((y - yc) / yc) * 6; // Max 6 degrees rotation
+        const rotateY = ((x - xc) / xc) * 6; // Max 6 degrees rotation
+        
+        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03) translateY(-4px)`;
+        card.style.transition = 'transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease';
+        card.style.zIndex = '5';
+    };
+
+    const handleCardMouseLeave = (e) => {
+        const card = e.currentTarget;
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translateY(0px)';
+        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease';
+        card.style.zIndex = '1';
+    };
+
+    const handleCardTouchMove = (e) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        
+        const card = e.currentTarget;
+        const rect = card.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        
+        const xc = rect.width / 2;
+        const yc = rect.height / 2;
+        
+        const rotateX = -((y - yc) / yc) * 6; // Max 6 degrees rotation
+        const rotateY = ((x - xc) / xc) * 6; // Max 6 degrees rotation
+        
+        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03) translateY(-4px)`;
+        card.style.transition = 'transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease';
+        card.style.zIndex = '5';
+    };
+
+    const handleCardTouchEnd = (e) => {
+        const card = e.currentTarget;
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translateY(0px)';
+        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease';
+        card.style.zIndex = '1';
+    };
 
     const openMenu = async (restaurant) => {
         setLoadingMenu(true);
@@ -259,6 +325,20 @@ function RestaurantList({ restaurants, setCart, cart }) {
     }, {});
 
     const cuisinesList = ['All', 'Pakistani', 'Indian', 'Chinese', 'Italian', 'Fast Food', 'Desserts'];
+    const featuredRestaurants = sortedRestaurants.filter(r => r.isFeatured).slice(0, 3);
+    const topRatedRestaurants = [...sortedRestaurants].sort((a, b) => b.rating - a.rating).slice(0, 4);
+    const fastestRestaurants = [...sortedRestaurants].sort((a, b) => {
+        const timeA = parseInt(a.deliveryTime?.split('-')[0], 10) || 30;
+        const timeB = parseInt(b.deliveryTime?.split('-')[0], 10) || 30;
+        return timeA - timeB;
+    }).slice(0, 3);
+
+    const experienceCards = [
+        { label: 'AI Search', title: 'Craving-to-dish matching', text: 'Ask for spicy, healthy, cheap, late-night, or family-size meals and jump straight to matching dishes.' },
+        { label: 'Live Ops', title: 'Order flow visibility', text: 'Customers, kitchens, riders, and admins all see role-specific controls built around the same delivery journey.' },
+        { label: 'Rewards', title: 'Wallet-first checkout', text: 'Promos, Gold delivery perks, service fees, and wallet balances are surfaced before confirmation.' },
+        { label: 'Quality', title: 'Menu intelligence layer', text: 'Macros, tags, best-seller badges, AI reviews, and filters help people choose faster.' }
+    ];
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -305,6 +385,12 @@ function RestaurantList({ restaurants, setCart, cart }) {
                             {aiResults.map(item => (
                                 <div 
                                     key={item._id}
+                                    className="transition-all duration-300 ease-out hover:scale-[1.03] hover:border-[var(--primary)] hover:shadow-[0_8px_20px_rgba(56, 224, 123,0.15)]"
+                                    onMouseMove={handleCardMouseMove}
+                                    onMouseLeave={handleCardMouseLeave}
+                                    onTouchStart={handleCardTouchMove}
+                                    onTouchMove={handleCardTouchMove}
+                                    onTouchEnd={handleCardTouchEnd}
                                     style={{
                                         minWidth: '220px',
                                         backgroundColor: 'rgba(255,255,255,0.02)',
@@ -438,7 +524,12 @@ function RestaurantList({ restaurants, setCart, cart }) {
                             {sortedRestaurants.map(r => (
                                 <div 
                                     key={r._id}
-                                    className={`glass-panel restaurant-card ${selectedRestaurant?._id === r._id ? 'active' : ''}`}
+                                    className={`glass-panel restaurant-card ${selectedRestaurant?._id === r._id ? 'active' : ''} transition-all duration-300 ease-out hover:scale-[1.03] hover:-translate-y-1 hover:border-[var(--primary)] hover:shadow-[0_8px_25px_rgba(56, 224, 123,0.25)]`}
+                                    onMouseMove={handleCardMouseMove}
+                                    onMouseLeave={handleCardMouseLeave}
+                                    onTouchStart={handleCardTouchMove}
+                                    onTouchMove={handleCardTouchMove}
+                                    onTouchEnd={handleCardTouchEnd}
                                     style={{ 
                                         padding: 0,
                                         borderColor: selectedRestaurant?._id === r._id ? 'var(--primary)' : 'var(--border-color)',
@@ -548,7 +639,16 @@ function RestaurantList({ restaurants, setCart, cart }) {
                                                 <h4 className="menu-category-title">{cat}</h4>
                                                 
                                                 {items.map(m => (
-                                                    <div key={m._id} className="menu-item-card" style={{ flexDirection: 'column', gap: '0.75rem' }}>
+                                                    <div 
+                                                        key={m._id} 
+                                                        className="menu-item-card transition-all duration-300 ease-out hover:scale-[1.02] hover:border-[var(--primary)] hover:shadow-[0_8px_20px_rgba(56, 224, 123,0.15)]" 
+                                                        onMouseMove={handleCardMouseMove}
+                                                        onMouseLeave={handleCardMouseLeave}
+                                                        onTouchStart={handleCardTouchMove}
+                                                        onTouchMove={handleCardTouchMove}
+                                                        onTouchEnd={handleCardTouchEnd}
+                                                        style={{ flexDirection: 'column', gap: '0.75rem' }}
+                                                    >
                                                         <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
                                                             {m.image && (
                                                                 <img src={m.image} alt={m.name} className="menu-item-image" />
@@ -600,14 +700,174 @@ function RestaurantList({ restaurants, setCart, cart }) {
                             )}
                         </div>
                     ) : (
-                        <div className="glass-panel empty-state">
-                            <h3>Menu Catalog</h3>
-                            <p style={{ marginTop: '0.5rem' }}>Select a restaurant to open menus and review nutrient macros.</p>
+                        <div className="glass-panel menu-empty-panel">
+                            <span className="card-kicker">Menu Command</span>
+                            <h3>Choose a kitchen to unlock the full menu experience.</h3>
+                            <p>Select any restaurant to reveal categorized dishes, nutrient macros, AI review summaries, and quick-add controls.</p>
+                            <div className="menu-preview-list">
+                                <div><strong>Starters</strong><span>snacks, soups, sides</span></div>
+                                <div><strong>Mains</strong><span>signature plates</span></div>
+                                <div><strong>Desserts</strong><span>sweet finishes</span></div>
+                                <div><strong>Drinks</strong><span>fresh pairings</span></div>
+                            </div>
+
+                            {featuredItems.length > 0 && (
+                                <div className="menu-featured-showcase" style={{ marginTop: '2rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
+                                    <span className="card-kicker" style={{ color: 'var(--secondary)', borderColor: 'rgba(6, 182, 212, 0.28)', background: 'rgba(6, 182, 212, 0.09)', marginBottom: '0.75rem', display: 'inline-block' }}>
+                                        🔥 Trending Dishes
+                                    </span>
+                                    <h4 style={{ fontSize: '1.1rem', color: '#ffffff', marginBottom: '1rem' }}>
+                                        Popular picks from our kitchens
+                                    </h4>
+                                    <div className="trending-dishes-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                                        {featuredItems.map(item => (
+                                            <div 
+                                                key={item._id}
+                                                className="trending-dish-card transition-all duration-300 ease-out hover:scale-[1.03] hover:border-[var(--primary)] hover:shadow-[0_8px_20px_rgba(56, 224, 123,0.15)]"
+                                                onMouseMove={handleCardMouseMove}
+                                                onMouseLeave={handleCardMouseLeave}
+                                                onTouchStart={handleCardTouchMove}
+                                                onTouchMove={handleCardTouchMove}
+                                                onTouchEnd={handleCardTouchEnd}
+                                                style={{
+                                                    backgroundColor: 'rgba(255,255,255,0.02)',
+                                                    border: '1px solid var(--border-color)',
+                                                    borderRadius: 'var(--radius-sm)',
+                                                    padding: '0.75rem',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    gap: '0.4rem',
+                                                    cursor: 'pointer'
+                                                }}
+                                                onClick={() => openMenu(item.restaurant)}
+                                            >
+                                                {item.image && (
+                                                    <div style={{ width: '100%', height: '110px', overflow: 'hidden', borderRadius: '8px', position: 'relative' }}>
+                                                        <img 
+                                                            src={item.image} 
+                                                            alt={item.name} 
+                                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                                        />
+                                                    </div>
+                                                )}
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '0.2rem' }}>
+                                                    <span style={{ fontWeight: '600', fontSize: '0.85rem', color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>
+                                                        {item.name}
+                                                    </span>
+                                                    <span style={{ color: 'var(--primary)', fontWeight: '700', fontSize: '0.85rem' }}>${item.price.toFixed(2)}</span>
+                                                </div>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                                                    From: <strong style={{ fontWeight: '600', color: '#ffffff' }}>{item.restaurant?.name}</strong>
+                                                </span>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem', marginTop: '0.2rem' }}>
+                                                    <span style={{ fontSize: '0.65rem', backgroundColor: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>
+                                                        🔥 {item.calories} kcal
+                                                    </span>
+                                                    {item.tags?.slice(0, 1).map(t => (
+                                                        <span key={t} style={{ fontSize: '0.65rem', backgroundColor: 'var(--primary-glow)', color: 'var(--primary)', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>
+                                                            {t}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.5rem' }}>
+                                                    <button 
+                                                        className="btn btn-primary btn-sm"
+                                                        style={{ flex: 1, fontSize: '0.75rem', padding: '0.25rem' }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            addToCart(item, item.restaurant?.name, item.restaurant?._id);
+                                                        }}
+                                                    >
+                                                        Add
+                                                    </button>
+                                                    <button 
+                                                        className="btn btn-secondary btn-sm"
+                                                        style={{ flex: 1, fontSize: '0.75rem', padding: '0.25rem', border: 'none' }}
+                                                        onClick={() => openMenu(item.restaurant)}
+                                                    >
+                                                        Menu
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
 
             </div>
+
+            <section className="loaded-showcase-grid">
+                <div className="feature-panel feature-panel-wide">
+                    <span className="card-kicker">Tonight's momentum</span>
+                    <h3>Smart delivery marketplace, not just a list of restaurants.</h3>
+                    <p>BiteSwift now fills the browsing journey with signals, deals, AI assistance, and delivery context so every scroll has a reason to exist.</p>
+                    <div className="showcase-meter-grid">
+                        <div><strong>{topRatedRestaurants[0]?.rating?.toFixed(1) || '4.9'}</strong><span>best rating</span></div>
+                        <div><strong>{fastestRestaurants[0]?.deliveryTime || '20-30'}</strong><span>fastest route</span></div>
+                        <div><strong>{featuredRestaurants.length || 3}</strong><span>featured picks</span></div>
+                    </div>
+                </div>
+
+                <div className="feature-panel live-feed-panel">
+                    <span className="card-kicker">Live Pulse</span>
+                    <div className="live-feed-list">
+                        <div><span></span>Kitchen slots opening in Gulberg</div>
+                        <div><span></span>Gold free delivery window active</div>
+                        <div><span></span>AI search tuned for high-protein meals</div>
+                        <div><span></span>Riders averaging under 25 minutes</div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="restaurant-rail-section">
+                <div className="section-heading-row">
+                    <div>
+                        <span className="eyebrow">Featured drops</span>
+                        <h3>High-signal picks for faster decisions</h3>
+                    </div>
+                    <span className="muted-note">Updated from your live catalog</span>
+                </div>
+                <div className="horizontal-restaurant-rail">
+                    {(featuredRestaurants.length ? featuredRestaurants : topRatedRestaurants).map(r => (
+                        <button 
+                            key={r._id} 
+                            className="rail-restaurant-card transition-all duration-300 ease-out hover:scale-[1.05] hover:shadow-[0_8px_20px_rgba(56, 224, 123,0.18)]" 
+                            onClick={() => openMenu(r)}
+                        >
+                            <img src={r.image} alt="" />
+                            <span>{r.cuisine}</span>
+                            <strong>{r.name}</strong>
+                            <small>{r.deliveryTime} mins | {r.rating.toFixed(1)} rating</small>
+                        </button>
+                    ))}
+                </div>
+            </section>
+
+            <section className="experience-card-grid">
+                {experienceCards.map(card => (
+                    <div className="feature-panel compact-feature" key={card.title}>
+                        <span>{card.label}</span>
+                        <h4>{card.title}</h4>
+                        <p>{card.text}</p>
+                    </div>
+                ))}
+            </section>
+
+            <section className="conversion-band">
+                <div>
+                    <span className="card-kicker">Fully loaded flow</span>
+                    <h3>Search, filter, pick, checkout, track, reward, and support in one polished screen.</h3>
+                </div>
+                <div className="conversion-steps">
+                    <span>Discover</span>
+                    <span>Compare</span>
+                    <span>Order</span>
+                    <span>Track</span>
+                </div>
+            </section>
         </div>
     );
 }

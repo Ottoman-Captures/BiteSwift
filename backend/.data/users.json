@@ -65,13 +65,14 @@
   },
   {
     "role": "customer",
-    "walletBalance": 21.85,
-    "loyaltyPoints": 1022,
+    "walletBalance": 55.68,
+    "loyaltyPoints": 1314,
     "isGoldSubscriber": true,
     "achievements": [
       "Account Created",
       "First Feast",
-      "BiteSwift Gold"
+      "BiteSwift Gold",
+      "Refund Handled"
     ],
     "createdAt": "2026-06-05T21:12:27.966Z",
     "name": "Swedenine stock",
@@ -93,8 +94,8 @@
   },
   {
     "role": "customer",
-    "walletBalance": 42.78,
-    "loyaltyPoints": 380,
+    "walletBalance": 112.09,
+    "loyaltyPoints": 969,
     "isGoldSubscriber": false,
     "achievements": [
       "Account Created",
@@ -106,5 +107,43 @@
     "email": "alex4@aura.healthy",
     "password": "$2a$10$optVcVS8WX4LTjC7xzeCHeCVprUMB3WSVYaS6PHmGNx0YW0eOzrEq",
     "_id": "fe74d7469bad7908c13be1fa"
+  },
+  {
+    "role": "admin",
+    "walletBalance": 0,
+    "loyaltyPoints": 0,
+    "isGoldSubscriber": false,
+    "achievements": [],
+    "createdAt": "2026-06-06T08:13:30.224Z",
+    "name": "hi",
+    "email": "alex4@aura.health6",
+    "password": "$2a$10$nOsauJpRcxFJtWWjKskSDujSg.gyr9tfbYDbBiIC.o9r6tYXpFUpG",
+    "_id": "0bf843e15333a09066f0a45e"
+  },
+  {
+    "role": "customer",
+    "walletBalance": 10,
+    "loyaltyPoints": 100,
+    "isGoldSubscriber": false,
+    "achievements": [
+      "Account Created"
+    ],
+    "createdAt": "2026-06-06T08:14:43.692Z",
+    "name": "hi",
+    "email": "alex4@aura.health67",
+    "password": "$2a$10$LdPXlnyQjprsA8tT6WHrQeKfmsvXave4S01GtNSR3jlgBDfzzBnby",
+    "_id": "6c6f6560df095e800846cfb4"
+  },
+  {
+    "role": "admin",
+    "walletBalance": 0,
+    "loyaltyPoints": 0,
+    "isGoldSubscriber": false,
+    "achievements": [],
+    "createdAt": "2026-06-06T08:16:44.182Z",
+    "name": "hi",
+    "email": "alex4@aura.healthhhhhh",
+    "password": "$2a$10$AGKzY2aA7qFl0wqQdT.UG.qDP7o3EG/0dB/3XYJV.K1poAXfYHISG",
+    "_id": "1307cc654c357addc869d10b"
   }
 ]
