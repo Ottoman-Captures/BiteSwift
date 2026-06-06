@@ -21,7 +21,7 @@ BiteSwift is a premium, full-stack, multi-role food delivery SaaS platform. Buil
 ## 📁 Repository Structure
 
 ```tree
-Shahzaib's Project/
+BiteSwift/
 ├── package.json         # Workspace/monorepo script coordinator
 ├── .gitignore           # Git exclusions (node_modules, .env, builds)
 ├── backend/             # Node/Express API Server
